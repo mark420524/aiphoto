@@ -1,0 +1,12 @@
+torchvision
+torch
+tornado
+scikit-image
+shortuuid
+pymatting
+numpy==1.19.5
+llvmlite==0.33.0
+numba==0.50
+dlib
+scikit-build
+opencv-python

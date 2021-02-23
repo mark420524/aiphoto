@@ -1,0 +1,10 @@
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.ip
+*.pyc
+__pycache__/
+*.jpg
+*.png
+*.pth
+*.dat
