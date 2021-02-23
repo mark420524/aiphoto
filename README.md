@@ -1,5 +1,13 @@
 [参考项目](https://github.com/itainf/aiphoto)
 
+## 下载模型
+
+需要下载两个模型，由于模型文件比较大，版本库没有上传
+
+[shape_predictor_68_face_landmarks.dat][http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2] 下载完成后将其放在```m_dlib```文件下
+
+[u2net][https://github.com/OPHoperHPO/image-background-remove-tool/releases/download/3.2/u2net.pth] 下载完成将其放在 ```u_2_net/saved_models/u2net```文件下
+
 # aiphoto
 最近要去办事情，很多地方都需要证件照，最近刚好在看AI，人脸识别，图形识别相关的知识，就打算利用这些技术开发一个证件照功能
 
