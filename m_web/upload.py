@@ -21,13 +21,13 @@ class UploadHandler(tornado.web.RequestHandler):
         # [{'filename': '新建文本文档.txt', 'body': b'61 60 -83\r\n-445 64 -259', 'content_type': 'text/plain'}],
         # 'file2':
         filesDict = self.request.files
-        width = self.request.width
-        height = self.request.height
-        color = self.request.color
+        width = self.get_body_argument('width')
+        height = self.get_body_argument('height')
+        color = self.get_body_argument('color')
         print('收到的参数是', width, height, color)
-        if not width and not height and not color:
+        if not width or  not height or  not color:
             self.write('error parameter')
-            return 0
+        else:
         for inputname in filesDict:
             # 第一层循环取出最外层信息，即input标签传回的name值
             # 用过filename键值对对应，取出对应的上传文件的真实属性
