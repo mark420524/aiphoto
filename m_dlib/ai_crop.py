@@ -2,12 +2,12 @@ import m_dlib.face_marks as fmarks
 from PIL import Image
 
 
-def crop_photo(path, target):
+def crop_photo(path, target, width, height):
     path = path
     shape, d = fmarks.predictor_face(path)
 
-    WIDTH_2IN = 413/2
-    HEIGHT_2IN = 626/2
+    WIDTH_2IN = width/2
+    HEIGHT_2IN = height/2
 
     # 人像中心点
     X_CENTRE = d.left()+(d.right()-d.left()) / 2

@@ -3,9 +3,9 @@ from PIL import Image
 
 def to_standard_trimap(alpha, trimap):
     #  Alpha图生成 trimap
-    print(alpha)
+    
     image = Image.open(alpha)
-    print(image)
+    
     # image = image.convert("P")
     # image_file.save('meinv_resize_trimap.png')
     sp = image.size

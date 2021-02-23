@@ -4,14 +4,10 @@ import m_web.upload as upload
 import os
 
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world")
-
 
 def make_app():
     return tornado.web.Application([
-        (r"/", MainHandler),
+        
         (r"/eam/fileLocal/upload",    upload.UploadHandler),
         (r"/eam/fileLocal/static",  tornado.web.StaticFileHandler, {"path": "/static"})
     ],
