@@ -27,7 +27,7 @@ class UploadHandler(tornado.web.RequestHandler):
         print('收到的参数是', width, height, color)
         if not width or  not height or  not color:
             self.write('error parameter')
-       else:
+        else:
             width = int(width)
             height = int(height)
             for inputname in filesDict:
