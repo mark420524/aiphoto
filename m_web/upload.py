@@ -40,10 +40,12 @@ class UploadHandler(tornado.web.RequestHandler):
             # 用过filename键值对对应，取出对应的上传文件的真实属性
             http_file = filesDict[inputname]
             for fileObj in http_file:
-
+                upload_name = fileObj.filename
+                upload_name_suffix = upload_name.split('.')[1]
+                upload_name_suffix = '.' + upload_name_suffix 
                 # 第二层循环取出完整的对象
                 # 取得当前路径下的 upfiles 文件夹+上fileObj.filename属性(即真实文件名)
-                filePath = os.path.join(parent_path, "static", filename+".jpg")
+                filePath = os.path.join(parent_path, "static", filename+upload_name_suffix)
                 
                 with open(filePath, 'wb') as f:
                     f.write(fileObj.body)
@@ -82,7 +84,7 @@ class UploadHandler(tornado.web.RequestHandler):
         #         to_standard_trimap.to_standard_trimap(alpha_resize_img, trimap)
         to_background.to_background(id_image, trimap, id_image_org, color)
         
-        self.write( "static/"+filename+"_meinv_id_2in.png")
+        self.write( filename+"id_2in.png")
 
 
 
