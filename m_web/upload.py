@@ -57,10 +57,10 @@ class UploadHandler(tornado.web.RequestHandler):
 
     def resize_image(self, org_img, width, height, color, filename):
         parent_path = os.path.dirname(os.path.dirname(__file__))
-        id_image = os.path.join(parent_path, "static", filename+"id.png")
+        #id_image = os.path.join(parent_path, "static", filename+"id.png")
         # 20200719
         # 通过识别人脸关键点，裁剪图像
-        ai_crop.crop_photo(org_img,id_image, width, height )
+        #ai_crop.crop_photo(org_img,id_image, width, height )
 
 
         
@@ -69,8 +69,8 @@ class UploadHandler(tornado.web.RequestHandler):
         alpha_resize_img = os.path.join(parent_path, "static", filename+"_alpha_resize.png")
         
         #
-        # 通过u_2_net 获取 alpha
-        my_u2net_test.test_seg_trimap(id_image, alpha_img, alpha_resize_img)
+        # 通过u_2_net 获取 alpha 先不裁剪
+        my_u2net_test.test_seg_trimap(org_img, alpha_img, alpha_resize_img)
         #
         # # 通过alpha 获取 trimap
         trimap = os.path.join(parent_path, "static", filename+"_trimap_resize.png")
@@ -82,7 +82,7 @@ class UploadHandler(tornado.web.RequestHandler):
         #
         # 证件照添加蓝底纯色背景//"..\\aiphoto\\img\\meinv_trimap_resize.png"
         #         to_standard_trimap.to_standard_trimap(alpha_resize_img, trimap)
-        to_background.to_background(id_image, trimap, id_image_org, color)
+        to_background.to_background(org_img, trimap, id_image_org, color)
         
         self.write( filename+"id_2in.png")
 
