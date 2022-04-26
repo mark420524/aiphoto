@@ -7,6 +7,5 @@ pymatting==1.1.2
 numpy==1.19.5
 llvmlite==0.33.0
 numba==0.50
-dlib==19.21.1
 scikit-build==0.14.1
 opencv-python==4.5.1.48
