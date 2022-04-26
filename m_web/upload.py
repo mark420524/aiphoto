@@ -4,9 +4,7 @@ import shortuuid
 from u_2_net import my_u2net_test
 from to_background import to_background
 from to_background import to_standard_trimap
-from m_dlib import ai_crop
-
-# import PILImageMy as mypil
+from resize import resize_image
 
 
 class UploadHandler(tornado.web.RequestHandler):
@@ -77,14 +75,16 @@ class UploadHandler(tornado.web.RequestHandler):
         to_standard_trimap.to_standard_trimap(alpha_resize_img, trimap)
         
 
-        id_image_org = os.path.join(parent_path, "static", filename+"id_2in.png")
+        id_image_org = os.path.join(parent_path, "static", filename+"id_2in.jpg")
 
         #
         # 证件照添加蓝底纯色背景//"..\\aiphoto\\img\\meinv_trimap_resize.png"
         #         to_standard_trimap.to_standard_trimap(alpha_resize_img, trimap)
         to_background.to_background(org_img, trimap, id_image_org, color)
+        target_image = os.path.join(parent_path,'static',filename+'_finally.jpg')
+        resize_image.resize_image(id_image_org, width, height, target_image)
         
-        self.write( filename+"id_2in.png")
+        self.write( filename+"id_2in.jpg")
 
 
 
