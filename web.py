@@ -8,10 +8,8 @@ import os
 def make_app():
     return tornado.web.Application([
         
-        (r"/upload",    upload.UploadHandler),
-        (r"/static",  tornado.web.StaticFileHandler, {"path": "/static"})
-    ],
-        static_path=os.path.dirname(os.path.dirname(__file__))+"/static"
+        (r"/upload",    upload.UploadHandler)
+    ]
     )
 
 

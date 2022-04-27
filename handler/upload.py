@@ -33,6 +33,8 @@ class UploadHandler(tornado.web.RequestHandler):
         today = date_util.todaystr()
         parent_folder = os.path.dirname(os.path.dirname(__file__))
         parent_path = os.path.join(parent_folder, static_folder, today)
+        if not os.path.exists(parent_path):
+            os.makedirs(parent_path)
         width = int(width)
         height = int(height)
         filename=shortuuid.uuid()
