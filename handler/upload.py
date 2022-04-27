@@ -76,11 +76,12 @@ class UploadHandler(tornado.web.RequestHandler):
         
 
         id_image_org = os.path.join(parent_path, "static", filename+"id_2in.jpg")
-
+        
+        cutout_image = os.path.join(parent_path, "static", filename+"_cutout.png")
         #
         # 证件照添加蓝底纯色背景//"..\\aiphoto\\img\\meinv_trimap_resize.png"
         #         to_standard_trimap.to_standard_trimap(alpha_resize_img, trimap)
-        to_background.to_background(org_img, trimap, id_image_org, color)
+        to_background.to_background(org_img, trimap, id_image_org, color, cutout_image)
         target_image = os.path.join(parent_path,'static',filename+'_finally.jpg')
         resize_image.resize_image(id_image_org, width, height, target_image)
         
