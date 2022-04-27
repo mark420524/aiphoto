@@ -6,7 +6,8 @@ from to_background import to_background
 from to_background import to_standard_trimap
 from resize import resize_image
 from utils import date_util
-
+static_folder = "static"
+temp_folder = "temp"
 class UploadHandler(tornado.web.RequestHandler):
 
     def post(self, *args, **kwargs):
@@ -29,7 +30,9 @@ class UploadHandler(tornado.web.RequestHandler):
             self.handler_image(filesDict, width, height, color)
  
     def handler_image(self, filesDict, width, height, color ):
-        parent_path = os.path.dirname(os.path.dirname(__file__))
+        today = date_util.todaystr()
+        parent_folder = os.path.dirname(os.path.dirname(__file__))
+        parent_path = os.path.join(parent_folder, static_folder, today)
         width = int(width)
         height = int(height)
         filename=shortuuid.uuid()
@@ -51,15 +54,15 @@ class UploadHandler(tornado.web.RequestHandler):
 
 
         org_img = filePath
-        self.resize_image(org_img, width, height, color, filename)
+        self.resize_image(org_img, width, height, color, filename, upload_name_suffix)
 
-    def resize_image(self, org_img, width, height, color, filename):
+    def resize_image(self, org_img, width, height, color, filename, suffix):
         today = date_util.todaystr()
         parent_folder = os.path.dirname(os.path.dirname(__file__))
-        parent_path = os.path.join(parent_folder, "static", today)
+        parent_path = os.path.join(parent_folder, static_folder, today)
         if not os.path.exists(parent_path):
             os.makedirs(parent_path)
-        temp_path = os.path.join(parent_folder,"temp")
+        temp_path = os.path.join(parent_folder, temp_folder)
         if not os.path.exists(temp_path):
             os.makedirs(temp_path)
         #id_image = os.path.join(parent_path, filename+"id.png")
@@ -90,10 +93,13 @@ class UploadHandler(tornado.web.RequestHandler):
         #最终图包含背景且切图
         target_image = os.path.join(parent_path, filename+'_finally.jpg')
         resize_image.resize_image(id_image_org, width, height, target_image)
+        source_image = os.path.join(static_folder, today, filename+suffix)
+        source_image_not_back = os.path.join(static_folder, today, filename+"_cutout.png")
+        target_iamge_cut = os.path.join(static_folder, today, filename+'_finally.jpg')
         info = {}
-        info['sourceImage'] = org_img
-        info['sourceImageNotBack'] = cutout_image
-        info['targetImageCut'] = target_image
+        info['sourceImage'] = source_image
+        info['sourceImageNotBack'] = source_image_not_back
+        info['targetImageCut'] = target_iamge_cut
         self.write_json( info)
 
     def write_json(self, info):
