@@ -55,10 +55,11 @@ class UploadHandler(tornado.web.RequestHandler):
 
     def resize_image(self, org_img, width, height, color, filename):
         today = date_util.todaystr()
-        parent_path = os.path.dirname(os.path.dirname(__file__), "static", today)
+        parent_folder = os.path.dirname(os.path.dirname(__file__))
+        parent_path = os.path.join(parent_folder, "static", today)
         if not os.path.exists(parent_path):
             os.makedirs(parent_path)
-        temp_path = os.path.dirname(os.path.dirname(__file__), "temp")
+        temp_path = os.path.join(parent_folder,"temp")
         if not os.path.exists(temp_path):
             os.makedirs(temp_path)
         #id_image = os.path.join(parent_path, filename+"id.png")
