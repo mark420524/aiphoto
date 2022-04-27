@@ -1,4 +1,3 @@
-import os
 import cv2
 
 def resize_image(src_image, width, height, target_image):

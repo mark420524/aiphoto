@@ -5,7 +5,7 @@ from u_2_net import my_u2net_test
 from to_background import to_background
 from to_background import to_standard_trimap
 from resize import resize_image
-
+from utils import date_util
 
 class UploadHandler(tornado.web.RequestHandler):
 
@@ -43,7 +43,7 @@ class UploadHandler(tornado.web.RequestHandler):
                 upload_name_suffix = '.' + upload_name_suffix 
                 # 第二层循环取出完整的对象
                 # 取得当前路径下的 upfiles 文件夹+上fileObj.filename属性(即真实文件名)
-                filePath = os.path.join(parent_path, "static", filename+upload_name_suffix)
+                filePath = os.path.join(parent_path, filename+upload_name_suffix)
                 
                 with open(filePath, 'wb') as f:
                     f.write(fileObj.body)
@@ -54,38 +54,50 @@ class UploadHandler(tornado.web.RequestHandler):
         self.resize_image(org_img, width, height, color, filename)
 
     def resize_image(self, org_img, width, height, color, filename):
-        parent_path = os.path.dirname(os.path.dirname(__file__))
-        #id_image = os.path.join(parent_path, "static", filename+"id.png")
+        today = date_util.todaystr()
+        parent_path = os.path.dirname(os.path.dirname(__file__), "static", today)
+        if not os.path.exists(parent_path):
+            os.makedirs(parent_path)
+        temp_path = os.path.dirname(os.path.dirname(__file__), "temp")
+        if not os.path.exists(temp_path):
+            os.makedirs(temp_path)
+        #id_image = os.path.join(parent_path, filename+"id.png")
         # 20200719
         # 通过识别人脸关键点，裁剪图像
         #ai_crop.crop_photo(org_img,id_image, width, height )
 
 
         
-        alpha_img = os.path.join(parent_path, "static", filename+"_alpha.png")
+        alpha_img = os.path.join(temp_path, filename+"_alpha.png")
         
-        alpha_resize_img = os.path.join(parent_path, "static", filename+"_alpha_resize.png")
+        alpha_resize_img = os.path.join(temp_path, filename+"_alpha_resize.png")
         
         #
         # 通过u_2_net 获取 alpha 先不裁剪
         my_u2net_test.test_seg_trimap(org_img, alpha_img, alpha_resize_img)
         #
         # # 通过alpha 获取 trimap
-        trimap = os.path.join(parent_path, "static", filename+"_trimap_resize.png")
+        trimap = os.path.join(temp_path, filename+"_trimap_resize.png")
         to_standard_trimap.to_standard_trimap(alpha_resize_img, trimap)
         
-
-        id_image_org = os.path.join(parent_path, "static", filename+"id_2in.jpg")
+        #原图
+        id_image_org = os.path.join(parent_path, filename+"id_2in.jpg")
+        #原图经过u_2_net 匹配不含背景图
+        cutout_image = os.path.join(parent_path, filename+"_cutout.png")
         
-        cutout_image = os.path.join(parent_path, "static", filename+"_cutout.png")
-        #
-        # 证件照添加蓝底纯色背景//"..\\aiphoto\\img\\meinv_trimap_resize.png"
-        #         to_standard_trimap.to_standard_trimap(alpha_resize_img, trimap)
         to_background.to_background(org_img, trimap, id_image_org, color, cutout_image)
-        target_image = os.path.join(parent_path,'static',filename+'_finally.jpg')
+        #最终图包含背景且切图
+        target_image = os.path.join(parent_path, filename+'_finally.jpg')
         resize_image.resize_image(id_image_org, width, height, target_image)
-        
-        self.write( filename+"id_2in.jpg")
+        info = {}
+        info['sourceImage'] = org_img
+        info['sourceImageNotBack'] = cutout_image
+        info['targetImageCut'] = target_image
+        self.write_json( info)
+
+    def write_json(self, info):
+        self.set_header('Content-Type', 'application/json')
+        self.write(tornado.escape.json_encode(info))
 
 
 
