@@ -1,6 +1,7 @@
 import tornado.ioloop
 import tornado.web
 import handler.upload as upload
+import handler.compose as compose
 import os
 
 
@@ -11,6 +12,7 @@ def make_app():
     return tornado.web.Application([
         
         (r"/upload",    upload.UploadHandler),
+        (r"/compose",    compose.ComposeHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path})
     ]
     )

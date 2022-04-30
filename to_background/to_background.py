@@ -8,7 +8,7 @@ color_dict = {
 }
 
 
-def to_background(org, resize_trimap, id_image, color, cutout_image):
+def to_background(org, resize_trimap, id_image, color, cutout_image=''):
     """
         org：原始图片
         resize_trimap：trimap
@@ -26,8 +26,9 @@ def to_background(org, resize_trimap, id_image, color, cutout_image):
 
     # estimate foreground from image and alpha
     foreground, background = estimate_foreground_ml(image, alpha, return_background=True)
-    cutout = stack_images(foreground, alpha)
-    save_image(cutout_image, cutout)
+    if cutout_image:
+        cutout = stack_images(foreground, alpha)
+        save_image(cutout_image, cutout)
     if not color:
        return -1
     new_background = Image.new('RGB', im.size, color_dict[color])
