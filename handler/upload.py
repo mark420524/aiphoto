@@ -7,6 +7,7 @@ from to_background import to_standard_trimap
 from resize import resize_image
 from utils import date_util
 import handler.base as base
+import re
 static_folder = "static"
 temp_folder = "temp"
 class UploadHandler(base.BaseHandler):
@@ -23,10 +24,11 @@ class UploadHandler(base.BaseHandler):
         filesDict = self.request.files
         width = self.get_body_argument('width')
         height = self.get_body_argument('height')
-        if width and not isinstance(width,int):
-            self.write_fail('error width parameters')
-        elif height and not isinstance(height,int):
-            self.write_fail('error height parameters')
+        num_re = r'^\d+$';
+        if width and not re.match(num_re,width):
+            self.write_fail('width参数不正确')
+        elif height and not re.match(num_re,height):
+            self.write_fail('height参数不正确')
         else:
             color = self.get_body_argument('color')
             self.handler_image(filesDict, width, height, color)
@@ -106,10 +108,10 @@ class UploadHandler(base.BaseHandler):
         source_image_not_back = os.path.join(static_folder, today, filename+"_cutout.png")
         info['sourceImage'] = source_image
         info['sourceImageNotBack'] = source_image_not_back
-        info['target_width']=width
-        info['target_height']=height
+        info['targetWidth']=width
+        info['targetHeight']=height
         source_height,source_width = resize_image.image_shape(org_img)
-        info['source_width']=source_width
-        info['source_height']=source_height
+        info['sourceWidth']=source_width
+        info['sourceHeight']=source_height
         self.write_success_data(info)
 
