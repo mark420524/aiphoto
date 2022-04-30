@@ -18,9 +18,7 @@ class ComposeHandler(base.BaseHandler):
             self.compose_image(source_image, color)
  
     def compose_image(self, source_image,  color ):
-        print(source_image,color)
         filename=source_image.split('.')[0]
-        print(filename,color)
         today = date_util.todaystr()
         parent_folder = os.path.dirname(os.path.dirname(__file__))
         parent_path = os.path.join(parent_folder, static_folder, today)
@@ -42,11 +40,13 @@ class ComposeHandler(base.BaseHandler):
         #原图
         #原图经过u_2_net 匹配不含背景图
         origin_image = os.path.join(parent_path, source_image)
-        image_absolute_path = os.path.join(parent_path, filename+"_compose.jpg") 
-        to_background.to_background(origin_image, trimap, image_absolute_path, color)
+        compose_name = shortuuid.uuid()
+        image_absolute_path = os.path.join(parent_path, compose_name+"_compose.jpg") 
+        back_image = os.path.join(temp_path, filename+"_bj.png")
+        to_background.to_background(origin_image, trimap, image_absolute_path, color, back_image)
         info = {}
         #最终图包含背景且切图
-        image_src = os.path.join(static_folder,today,filename+"_compose.jpg")
+        image_src = os.path.join(static_folder,today,compose_name+"_compose.jpg")
         info['imageSrc']=image_src
         self.write_success_data(info)
 

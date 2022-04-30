@@ -92,8 +92,8 @@ class UploadHandler(base.BaseHandler):
         id_image_org = os.path.join(parent_path, filename+"id_2in.jpg")
         #原图经过u_2_net 匹配不含背景图
         cutout_image = os.path.join(parent_path, filename+"_cutout.png")
-        
-        to_background.to_background(org_img, trimap, id_image_org, color, cutout_image)
+        back_image = os.path.join(temp_path, filename+"_bj.png")
+        to_background.to_background(org_img, trimap, id_image_org, color,back_image, cutout_image)
         info = {}
         if width   and height:
             width = int(width)

@@ -1,6 +1,5 @@
 from pymatting import *
-from PIL import Image
-
+from PIL import Image,ImageColor
 color_dict = {
     "white": (255, 255, 255),
     "red": (255, 0, 0),
@@ -8,7 +7,7 @@ color_dict = {
 }
 
 
-def to_background(org, resize_trimap, id_image, color, cutout_image=''):
+def to_background(org, resize_trimap, id_image, color,back_image, cutout_image=''):
     """
         org：原始图片
         resize_trimap：trimap
@@ -31,10 +30,20 @@ def to_background(org, resize_trimap, id_image, color, cutout_image=''):
         save_image(cutout_image, cutout)
     if not color:
        return -1
-    new_background = Image.new('RGB', im.size, color_dict[color])
-    new_background.save("bj.png")
+    try:
+        new_background = Image.new('RGB', im.size, color_dict[color])
+    except KeyError :
+        #此时自定义颜色
+        try:
+            image_color = ImageColor.getrgb(color)
+        except ValueError:
+            #自定义颜色值不对,默认白色
+            image_color = color_dict['white']
+        new_background = Image.new('RGB', im.size, image_color)
+        
+    new_background.save(back_image)
     # load new background
-    new_background = load_image("bj.png", "RGB", scale, "box")
+    new_background = load_image(back_image, "RGB", scale, "box")
     # blend foreground with background and alpha
     new_image = blend(foreground, new_background, alpha)
     save_image(id_image, new_image)
