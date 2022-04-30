@@ -6,9 +6,10 @@ from to_background import to_background
 from to_background import to_standard_trimap
 from resize import resize_image
 from utils import date_util
+import handler.base as base
 static_folder = "static"
 temp_folder = "temp"
-class UploadHandler(tornado.web.RequestHandler):
+class UploadHandler(base.BaseHandler):
 
     def post(self, *args, **kwargs):
 
@@ -22,11 +23,12 @@ class UploadHandler(tornado.web.RequestHandler):
         filesDict = self.request.files
         width = self.get_body_argument('width')
         height = self.get_body_argument('height')
-        color = self.get_body_argument('color')
-        print('收到的参数是', width, height, color)
-        if not width or  not height or  not color:
-            self.write('error parameter')
+        if width and not isinstance(width,int):
+            self.write_fail('error width parameters')
+        elif height and not isinstance(height,int):
+            self.write_fail('error height parameters')
         else:
+            color = self.get_body_argument('color')
             self.handler_image(filesDict, width, height, color)
  
     def handler_image(self, filesDict, width, height, color ):
@@ -35,8 +37,6 @@ class UploadHandler(tornado.web.RequestHandler):
         parent_path = os.path.join(parent_folder, static_folder, today)
         if not os.path.exists(parent_path):
             os.makedirs(parent_path)
-        width = int(width)
-        height = int(height)
         filename=shortuuid.uuid()
         for inputname in filesDict:
             # 第一层循环取出最外层信息，即input标签传回的name值
@@ -92,21 +92,24 @@ class UploadHandler(tornado.web.RequestHandler):
         cutout_image = os.path.join(parent_path, filename+"_cutout.png")
         
         to_background.to_background(org_img, trimap, id_image_org, color, cutout_image)
+        info = {}
+        if width   and height:
+            width = int(width)
+            height = int(height)
+         
+            target_image = os.path.join(parent_path, filename+'_finally.jpg')
+            resize_image.resize_image(id_image_org, width, height, target_image)
+            target_iamge_cut = os.path.join(static_folder, today, filename+'_finally.jpg')
+            info['targetImageCut'] = target_iamge_cut
         #最终图包含背景且切图
-        target_image = os.path.join(parent_path, filename+'_finally.jpg')
-        resize_image.resize_image(id_image_org, width, height, target_image)
         source_image = os.path.join(static_folder, today, filename+suffix)
         source_image_not_back = os.path.join(static_folder, today, filename+"_cutout.png")
-        target_iamge_cut = os.path.join(static_folder, today, filename+'_finally.jpg')
-        info = {}
         info['sourceImage'] = source_image
         info['sourceImageNotBack'] = source_image_not_back
-        info['targetImageCut'] = target_iamge_cut
-        self.write_json( info)
-
-    def write_json(self, info):
-        self.set_header('Content-Type', 'application/json')
-        self.write(tornado.escape.json_encode(info))
-
-
+        info['target_width']=width
+        info['target_height']=height
+        source_height,source_width = resize_image.image_shape(org_img)
+        info['source_width']=source_width
+        info['source_height']=source_height
+        self.write_success_data(info)
 

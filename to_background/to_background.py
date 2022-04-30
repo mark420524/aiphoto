@@ -22,16 +22,18 @@ def to_background(org, resize_trimap, id_image, color, cutout_image):
     # estimate alpha from image and trimap
     alpha = estimate_alpha_cf(image, trimap)
 
-    new_background = Image.new('RGB', im.size, color_dict[color])
-    new_background.save("bj.png")
-    # load new background
-    new_background = load_image("bj.png", "RGB", scale, "box")
 
 
     # estimate foreground from image and alpha
     foreground, background = estimate_foreground_ml(image, alpha, return_background=True)
     cutout = stack_images(foreground, alpha)
     save_image(cutout_image, cutout)
+    if not color:
+       return -1
+    new_background = Image.new('RGB', im.size, color_dict[color])
+    new_background.save("bj.png")
+    # load new background
+    new_background = load_image("bj.png", "RGB", scale, "box")
     # blend foreground with background and alpha
     new_image = blend(foreground, new_background, alpha)
     save_image(id_image, new_image)
