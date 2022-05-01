@@ -23,7 +23,7 @@ class ComposeHandler(base.BaseHandler):
         parent_folder = os.path.dirname(os.path.dirname(__file__))
         parent_path = os.path.join(parent_folder, static_folder, today)
         if not os.path.exists(parent_path):
-            os.mkdirs(parent_path)        
+            os.makedirs(parent_path)        
         temp_path = os.path.join(parent_folder, temp_folder)
         if not os.path.exists(temp_path):
             os.makedirs(temp_path)
