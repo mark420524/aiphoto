@@ -20,5 +20,7 @@ def make_app():
 
 if __name__ == "__main__":
     app = make_app()
-    app.listen(8013)
+    port = 9000
+    print('app service listen %d' % port)
+    app.listen(9000)
     tornado.ioloop.IOLoop.current().start()
