@@ -1,6 +1,9 @@
 import tornado.web
-
+import os
+import config.config as config
 class BaseHandler(tornado.web.RequestHandler):
+    def get_file_path(self):
+        return config.get_config('file_path')
     def write_success(self):
         self.set_header('Content-Type', 'application/json')
         ret_result = {}

@@ -4,23 +4,24 @@ from to_background import to_background
 from to_background import to_standard_trimap
 from utils import date_util
 import handler.base as base
-static_folder = "static"
-temp_folder = "temp"
+
 class ComposeHandler(base.BaseHandler):
 
     def post(self, *args, **kwargs):
-        
+        config_path = self.get_file_path()
         color = self.get_body_argument('color')
         source_image  = self.get_body_argument('sourceImage')
         if not source_image or not color:
             self.write_fail('参数不正确')
         else:
-            self.compose_image(source_image, color)
+            self.compose_image(source_image, color, config_path)
  
-    def compose_image(self, source_image,  color ):
+    def compose_image(self, source_image,  color, config_path):
         filename=source_image.split('.')[0]
         today = date_util.todaystr()
-        parent_folder = os.path.dirname(os.path.dirname(__file__))
+        parent_folder = config_path['root_folder']
+        static_folder = config_path['static']
+        temp_folder = config_path['temp']
         parent_path = os.path.join(parent_folder, static_folder, today)
         if not os.path.exists(parent_path):
             os.makedirs(parent_path)        

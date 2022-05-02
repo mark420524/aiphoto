@@ -8,8 +8,6 @@ from resize import resize_image
 from utils import date_util
 import handler.base as base
 import re
-static_folder = "static"
-temp_folder = "temp"
 class UploadHandler(base.BaseHandler):
 
     def post(self, *args, **kwargs):
@@ -22,6 +20,7 @@ class UploadHandler(base.BaseHandler):
         # [{'filename': '新建文本文档.txt', 'body': b'61 60 -83\r\n-445 64 -259', 'content_type': 'text/plain'}],
         # 'file2':
         filesDict = self.request.files
+        config_path = self.get_file_path()
         width = self.get_body_argument('width')
         height = self.get_body_argument('height')
         num_re = r'^\d+$';
@@ -31,11 +30,12 @@ class UploadHandler(base.BaseHandler):
             self.write_fail('height参数不正确')
         else:
             color = self.get_body_argument('color')
-            self.handler_image(filesDict, width, height, color)
+            self.handler_image(filesDict, width, height, color, config_path)
  
-    def handler_image(self, filesDict, width, height, color ):
+    def handler_image(self, filesDict, width, height, color, config_path ):
         today = date_util.todaystr()
-        parent_folder = os.path.dirname(os.path.dirname(__file__))
+        parent_folder = config_path['root_folder']
+        static_folder = config_path['static']
         parent_path = os.path.join(parent_folder, static_folder, today)
         if not os.path.exists(parent_path):
             os.makedirs(parent_path)
@@ -58,11 +58,13 @@ class UploadHandler(base.BaseHandler):
 
 
         org_img = filePath
-        self.resize_image(org_img, width, height, color, filename, upload_name_suffix)
+        self.resize_image(org_img, width, height, color, filename, upload_name_suffix, config_path)
 
-    def resize_image(self, org_img, width, height, color, filename, suffix):
+    def resize_image(self, org_img, width, height, color, filename, suffix, config_path):
         today = date_util.todaystr()
-        parent_folder = os.path.dirname(os.path.dirname(__file__))
+        parent_folder = config_path['root_folder']
+        static_folder = config_path['static']
+        temp_folder = config_path['temp']
         parent_path = os.path.join(parent_folder, static_folder, today)
         if not os.path.exists(parent_path):
             os.makedirs(parent_path)
