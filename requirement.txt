@@ -10,3 +10,4 @@ numba==0.50
 scikit-build==0.14.1
 opencv-python==4.5.1.48
 configparser==5.2.0
+cos-python-sdk-v5

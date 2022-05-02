@@ -8,6 +8,8 @@ from resize import resize_image
 from utils import date_util
 import handler.base as base
 import re
+from cloud import cloud_cos 
+
 class UploadHandler(base.BaseHandler):
 
     def post(self, *args, **kwargs):
@@ -76,8 +78,10 @@ class UploadHandler(base.BaseHandler):
         # 通过识别人脸关键点，裁剪图像
         #ai_crop.crop_photo(org_img,id_image, width, height )
 
+        #上传原图到cos
+        source_image = os.path.join(static_folder, today, filename+suffix)
+        cloud_cos.upload_default_bucket(org_img, source_image)
 
-        
         alpha_img = os.path.join(temp_path, filename+"_alpha.png")
         
         alpha_resize_img = os.path.join(temp_path, filename+"_alpha_resize.png")
@@ -94,6 +98,7 @@ class UploadHandler(base.BaseHandler):
         id_image_org = os.path.join(parent_path, filename+"id_2in.jpg")
         #原图经过u_2_net 匹配不含背景图
         cutout_image = os.path.join(parent_path, filename+"_cutout.png")
+        source_image_not_back = os.path.join(static_folder, today, filename+"_cutout.png")
         back_image = os.path.join(temp_path, filename+"_bj.png")
         to_background.to_background(org_img, trimap, id_image_org, color,back_image, cutout_image)
         info = {}
@@ -104,10 +109,17 @@ class UploadHandler(base.BaseHandler):
             target_image = os.path.join(parent_path, filename+'_finally.jpg')
             resize_image.resize_image(id_image_org, width, height, target_image)
             target_iamge_cut = os.path.join(static_folder, today, filename+'_finally.jpg')
+            #上传最终图
+            cloud_cos.upload_default_bucket(target_image, target_iamge_cut)
+             
             info['targetImageCut'] = target_iamge_cut
+        else:
+            # 上传无背景图
+            cloud_cos.upload_default_bucket(cutout_image, source_image_not_back)
+            
+        #上传到cos
+        
         #最终图包含背景且切图
-        source_image = os.path.join(static_folder, today, filename+suffix)
-        source_image_not_back = os.path.join(static_folder, today, filename+"_cutout.png")
         info['sourceImage'] = source_image
         info['sourceImageNotBack'] = source_image_not_back
         info['targetWidth']=width
@@ -115,5 +127,6 @@ class UploadHandler(base.BaseHandler):
         source_height,source_width = resize_image.image_shape(org_img)
         info['sourceWidth']=source_width
         info['sourceHeight']=source_height
+        info['imageDomain'] = cloud_cos.get_default_domain()
         self.write_success_data(info)
 

@@ -4,6 +4,7 @@ from to_background import to_background
 from to_background import to_standard_trimap
 from utils import date_util
 import handler.base as base
+from cloud import cloud_cos
 
 class ComposeHandler(base.BaseHandler):
 
@@ -49,5 +50,7 @@ class ComposeHandler(base.BaseHandler):
         #最终图包含背景且切图
         image_src = os.path.join(static_folder,today,compose_name+"_compose.jpg")
         info['imageSrc']=image_src
+        info['imageDomain'] = cloud_cos.get_default_domain()
+        cloud_cos.upload_default_bucket( image_absolute_path , image_src)
         self.write_success_data(info)
 
