@@ -47,10 +47,14 @@ class ComposeHandler(base.BaseHandler):
         back_image = os.path.join(temp_path, filename+"_bj.png")
         to_background.to_background(origin_image, trimap, image_absolute_path, color, back_image)
         info = {}
+        self.delete_temp_file(origin_image)
+        self.delete_temp_file(trimap)
+        self.delete_temp_file(back_image)
         #最终图包含背景且切图
         image_src = os.path.join(static_folder,today,compose_name+"_compose.jpg")
         info['imageSrc']=image_src
         info['imageDomain'] = cloud_cos.get_default_domain()
         cloud_cos.upload_default_bucket( image_absolute_path , image_src)
+        self.delete_temp_file(image_absolute_path)
         self.write_success_data(info)
 

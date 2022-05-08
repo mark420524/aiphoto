@@ -101,7 +101,10 @@ class UploadHandler(base.BaseHandler):
         source_image_not_back = os.path.join(static_folder, today, filename+"_cutout.png")
         back_image = os.path.join(temp_path, filename+"_bj.png")
         to_background.to_background(org_img, trimap, id_image_org, color,back_image, cutout_image)
+        if color:
+            self.delete_temp_file(back_image)
         info = {}
+        source_height,source_width = resize_image.image_shape(org_img)
         if width   and height:
             width = int(width)
             height = int(height)
@@ -113,18 +116,22 @@ class UploadHandler(base.BaseHandler):
             cloud_cos.upload_default_bucket(target_image, target_iamge_cut)
              
             info['targetImageCut'] = target_iamge_cut
+            self.delete_temp_file(target_image)
+            self.delete_temp_file(org_img)
+            self.delete_temp_file(trimap)
         else:
             # 上传无背景图
             cloud_cos.upload_default_bucket(cutout_image, source_image_not_back)
             
         #上传到cos
-        
+        self.delete_temp_file(alpha_img)
+        self.delete_temp_file(alpha_resize_img)
+        self.delete_temp_file(cutout_image)
         #最终图包含背景且切图
         info['sourceImage'] = source_image
         info['sourceImageNotBack'] = source_image_not_back
         info['targetWidth']=width
         info['targetHeight']=height
-        source_height,source_width = resize_image.image_shape(org_img)
         info['sourceWidth']=source_width
         info['sourceHeight']=source_height
         info['imageDomain'] = cloud_cos.get_default_domain()

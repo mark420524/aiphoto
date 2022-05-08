@@ -24,3 +24,6 @@ class BaseHandler(tornado.web.RequestHandler):
         ret_result['code'] = -1
         ret_result['message'] = message
         self.write(tornado.escape.json_encode(ret_result))
+
+    def delete_temp_file(self,file_path):
+        os.remove(file_path)
