@@ -26,4 +26,8 @@ class BaseHandler(tornado.web.RequestHandler):
         self.write(tornado.escape.json_encode(ret_result))
 
     def delete_temp_file(self,file_path):
-        os.remove(file_path)
+        try:
+            os.remove(file_path)
+        except FileNotFoundError:
+            #do nothing
+            pass

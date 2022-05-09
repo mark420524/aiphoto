@@ -2,6 +2,7 @@ import tornado.ioloop
 import tornado.web
 import handler.upload as upload
 import handler.compose as compose
+import handler.delete as delete
 import os
 import config.config as config
 
@@ -16,6 +17,7 @@ def make_app():
         
         (r"/upload",    upload.UploadHandler),
         (r"/compose",    compose.ComposeHandler),
+        (r"/delete",    delete.DeleteHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path})
     ]
     )

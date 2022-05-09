@@ -119,6 +119,7 @@ class UploadHandler(base.BaseHandler):
             self.delete_temp_file(target_image)
             self.delete_temp_file(org_img)
             self.delete_temp_file(trimap)
+            self.delete_temp_file(id_image_org)
         else:
             # 上传无背景图
             cloud_cos.upload_default_bucket(cutout_image, source_image_not_back)
