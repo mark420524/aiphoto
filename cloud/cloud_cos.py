@@ -5,12 +5,11 @@ import sys
 from log import log_util
 from config import config
 
-config_info = config.get_config('cos')
-secret_id = config_info['secret_id']
-secret_key = config_info['secret_key']
-region = config_info['region']
-app_id = config_info['app_id']
-bucket=config_info['bucket']
+secret_id = config.get_config_key('secret_id','cos')
+secret_key = config.get_config_key('secret_key','cos')
+region = config.get_config_key('region','cos')
+app_id = config.get_config_key('app_id','cos')
+bucket= config.get_config_key('bucket','cos')
 bucket_name = '%s-%s' %(bucket, app_id)
 #print(secret_id,secret_key,region, bucket_name)
 config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key)
