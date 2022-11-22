@@ -46,8 +46,8 @@ def pre_net():
     model_name = 'u2net'
     path = os.path.dirname(__file__)
     model_dir = path+'/saved_models/'+ model_name + '/' + model_name + '.pth'
-    print(model_dir)
-    print("...load U2NET---173.6 MB")
+    #print(model_dir)
+    #print("...load U2NET---173.6 MB")
     net = U2NET(3,1)
     # 指定cpu
     net.load_state_dict(torch.load(model_dir, map_location=torch.device('cpu')))
@@ -83,7 +83,7 @@ def test_seg_trimap(org,alpha,alpha_resize):
     # org_trimap:
     # resize_trimap: 调整尺寸的trimap
     image = Image.open(org)
-    print(image)
+    #print(image)
     img = np.array(image)
     net = pre_net()
     inputs_test = pre_test_data(img)
