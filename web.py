@@ -3,6 +3,7 @@ import tornado.web
 import handler.upload as upload
 import handler.compose as compose
 import handler.photo_size as photo_size
+import handler.other_app as other_app
 import os
 import config.config as config
 
@@ -18,6 +19,7 @@ def make_app():
         (r"/upload",    upload.UploadHandler),
         (r"/compose",    compose.ComposeHandler),
         (r"/photo/size",    photo_size.PhotoSizeHandler),
+        (r"/other/info",    other_app.OtherAppHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path})
     ]
     )

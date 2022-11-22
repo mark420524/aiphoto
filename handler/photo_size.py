@@ -2,6 +2,7 @@ import handler.base as base
 
 class PhotoSizeHandler(base.BaseHandler):
     def get(self, *args, **kwargs):
+        name = self.get_argument('name')
         size_info = [
           {"pxHeight":413,"mmHeight":35,"pxWidth":295,"mmWidth":25,"color":"blue","name":"一寸（蓝底）","_id":1,"sort":1,"status":1,"customer":0},
 {"pxHeight":413,"mmHeight":35,"pxWidth":295,"mmWidth":25,"color":"white","name":"一寸（白底）","_id":2,"sort":2,"status":1,"customer":0},
@@ -63,4 +64,6 @@ class PhotoSizeHandler(base.BaseHandler):
 {"pxHeight":370,"mmHeight":31,"pxWidth":210,"mmWidth":18,"color":"","name":"保险从业","_id":58,"sort":58,"status":1,"customer":0},
 {"pxHeight":441,"mmHeight":32,"pxWidth":358,"mmWidth":26,"color":"","name":"全国中小学生学籍","_id":59,"sort":59,"status":1,"customer":0}
           ]
+        if name:
+           size_info = list(filter(lambda x:x['name'].find(name)>-1, size_info))
         self.write_success_data(size_info)

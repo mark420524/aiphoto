@@ -115,5 +115,7 @@ class UploadHandler(base.BaseHandler):
         source_height,source_width = resize_image.image_shape(org_img)
         info['sourceWidth']=source_width
         info['sourceHeight']=source_height
+        image_path = self.get_image_path()
+        info['imageDomain']=image_path['image_domain']
         self.write_success_data(info)
 

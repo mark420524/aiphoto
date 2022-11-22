@@ -49,5 +49,7 @@ class ComposeHandler(base.BaseHandler):
         #最终图包含背景且切图
         image_src = os.path.join(static_folder,today,compose_name+"_compose.jpg")
         info['imageSrc']=image_src
+        image_path = self.get_image_path()
+        info['imageDomain']=image_path['image_domain']
         self.write_success_data(info)
 
