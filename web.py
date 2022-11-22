@@ -2,6 +2,7 @@ import tornado.ioloop
 import tornado.web
 import handler.upload as upload
 import handler.compose as compose
+import handler.photo_size as photo_size
 import os
 import config.config as config
 
@@ -16,6 +17,7 @@ def make_app():
         
         (r"/upload",    upload.UploadHandler),
         (r"/compose",    compose.ComposeHandler),
+        (r"/photo/size",    photo_size.PhotoSizeHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path})
     ]
     )
@@ -25,5 +27,5 @@ if __name__ == "__main__":
     app = make_app()
     port = 9000
     print('app service listen %d' % port)
-    app.listen(9000)
+    app.listen(port)
     tornado.ioloop.IOLoop.current().start()
