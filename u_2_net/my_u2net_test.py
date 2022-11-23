@@ -10,7 +10,7 @@ from PIL import Image
 import os
 
 # normalize the predicted SOD probability map
-def normPRED(d):
+def norm_pred(d):
     ma = torch.max(d)
     mi = torch.min(d)
     dn = (d-mi)/(ma-mi)
@@ -46,10 +46,7 @@ def pre_net():
     model_name = 'u2net'
     path = os.path.dirname(__file__)
     model_dir = path+'/saved_models/'+ model_name + '/' + model_name + '.pth'
-    #print(model_dir)
-    #print("...load U2NET---173.6 MB")
     net = U2NET(3,1)
-    # 指定cpu
     net.load_state_dict(torch.load(model_dir, map_location=torch.device('cpu')))
     if torch.cuda.is_available():
         net.cuda()
@@ -60,12 +57,14 @@ def pre_net():
 def pre_test_data(img):
     torch.cuda.empty_cache()
     sample = preprocess(img)
-    inputs_test = sample['image'].unsqueeze(0)
-    inputs_test = inputs_test.type(torch.FloatTensor)
-    if torch.cuda.is_available():
-        inputs_test = Variable(inputs_test.cuda())
-    else:
-        inputs_test = Variable(inputs_test)
+    with torch.no_grad():
+        inputs_test = torch.FloatTensor(sample["image"].unsqueeze(0).float())
+    #inputs_test = sample['image'].unsqueeze(0)
+    #inputs_test = inputs_test.type(torch.FloatTensor)
+    #if torch.cuda.is_available():
+    #    inputs_test = Variable(inputs_test.cuda())
+    #else:
+    #    inputs_test = Variable(inputs_test)
     return inputs_test
 
 
@@ -76,28 +75,36 @@ def get_im(pred):
     im = Image.fromarray(predict_np*255).convert('RGB')
     return im
 
-
-def test_seg_trimap(org,alpha,alpha_resize):
+def test_seg_trimap(org,alpha, alpha_resize):
     # 将原始图片转换成 Alpha图
     # org：原始图片
     # org_trimap:
     # resize_trimap: 调整尺寸的trimap
     image = Image.open(org)
-    #print(image)
-    img = np.array(image)
+    sample = preprocess(np.array(image))
+    #model_name = 'u2net'
+    #path = os.path.dirname(__file__)
+    #model_dir = path+'/saved_models/'+ model_name + '/' + model_name + '.pth'
+    #net = U2NET(3,1)
+    #net.load_state_dict(torch.load(model_dir, map_location=torch.device('cpu')))
+    #if torch.cuda.is_available():
+    #    net.cuda()
+    #net.eval()
+    
     net = pre_net()
-    inputs_test = pre_test_data(img)
-    d1, d2, d3, d4, d5, d6, d7 = net(inputs_test)
-    # normalization
-    pred = d1[:, 0, :, :]
-    pred = normPRED(pred)
-    # 将数据转换成图片
-    im = get_im(pred)
-    im.save(alpha)
-    sp = image.size
-    # 根据原始图片调整尺寸
-    imo = im.resize((sp[0], sp[1]), resample=Image.BILINEAR)
-    imo.save(alpha_resize)
+    with torch.no_grad():
+        inputs_test = torch.FloatTensor(sample["image"].unsqueeze(0).float())
+        d1, _, _, _, _, _, _ = net(inputs_test)
+        # normalization
+        pred = d1[:, 0, :, :]
+        predict = norm_pred(pred).squeeze().cpu().data.numpy()
+        # 将数据转换成图片
+        im =  Image.fromarray(predict*255).convert('RGB')
+        #im.save(alpha)
+        # 根据原始图片调整尺寸
+        imo = im.resize((image.size), resample=Image.BILINEAR)
+        imo.save(alpha_resize)
+        del d1, pred, predict, inputs_test, sample, net 
 
 
 # if __name__ == "__main__":
