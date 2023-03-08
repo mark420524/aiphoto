@@ -6,12 +6,6 @@ from time import strftime, localtime
 from datetime import timedelta, date
 import calendar
 
-year = strftime("%Y",localtime())
-mon  = strftime("%m",localtime())
-day  = strftime("%d",localtime())
-hour = strftime("%H",localtime())
-min  = strftime("%M",localtime())
-sec  = strftime("%S",localtime())
 
 def today():
     '''''
@@ -23,8 +17,7 @@ def todaystr():
     '''
     get date string, date format="YYYYMMDD"
     '''
-    return year+mon+day
-
+    return strftime("%Y%m%d", localtime())
 def datetime():
     '''''
     get datetime,format="YYYY-MM-DD HH:MM:SS"
@@ -36,7 +29,7 @@ def datetimestr():
     get datetime string
     date format="YYYYMMDDHHMMSS"
     '''
-    return year+mon+day+hour+min+sec
+    return strftime("%Y%m%d%H%M%S",localtime())
 
 def get_day_of_day(n=0):
     '''''
@@ -98,7 +91,10 @@ def getyearandmonth(n=0):
     ''''' 
     get the year,month,days from today 
     befor or after n months 
-    ''' 
+    '''
+    year = strftime("%Y",localtime()) 
+    mon  = strftime("%m",localtime())
+    
     thisyear = int(year) 
     thismon = int(mon) 
     totalmon = thismon+n 
@@ -152,7 +148,8 @@ def get_today_month(n=0):
     date format = "YYYY-MM-DD" 
     ''' 
     (y,m,d) = getyearandmonth(n) 
-    arr=(y,m,d) 
+    arr=(y,m,d)
+    day  = strftime("%d",localtime()) 
     if(int(day)<int(d)): 
         arr = (y,m,day) 
     return "-".join("%s" %i for i in arr) 
